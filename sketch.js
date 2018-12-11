@@ -5,7 +5,7 @@ var ste;
 
 
 function preload(){
-  steImg = loadImage("ste.jpg.PNG");
+  steImg = loadImage("ste.png");
   hockey = loadImage("hockey.jpg");
 }
 
