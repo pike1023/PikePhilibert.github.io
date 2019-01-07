@@ -2,11 +2,17 @@ var steImg;
 var hockey;
 var badguy = [];
 var ste;
+var greenthing;
+var point = 0;
+var gameOver = false;
+var gameOverImg;
+
 
 
 function preload(){
   steImg = loadImage("ste.png");
   hockey = loadImage("hockey.jpg");
+  gameOverImg = loadImage("gameover1.jpg");
 }
 
 function setup() {
@@ -15,6 +21,7 @@ function setup() {
   for (var i = 0; i < 5; i++)  {
     badguy[i] = new Badguy();
   }
+  greenthing = new Greenthing();
 }
 
 function draw() {
@@ -23,14 +30,22 @@ function draw() {
   for(var i = 0; i < badguy.length; i++) {
     badguy[i].display();
      badguy[i].move();
+  badguy[i].checkforhit();
+  }
+  greenthing.display();
+  greenthing.checkforpoint();
+  if(gameOver == true){
+    GameOverScreen();
   }
 }
 
 function Ste(){
-  this.x = 2000;
+  this.x = 1000;
   this.y = 350;
   this.display = function(){
+    imageMode(CENTER);
     image(steImg, this.x, this.y, 575, 575)
+    imageMode(CORNER);
   }
   this.move = function(x, y) {
     this.x += x;
@@ -77,4 +92,38 @@ function Badguy(){
       this.velocity.x *= -1;
     }
   }
+  this.checkforhit = function(){
+    var x = (this.position.x - ste.x)*(this.position.x - ste.x);
+    var y = (this.position.y - ste.y)*(this.position.y - ste.y);
+    var d = sqrt(x+y)
+
+    if (d < 100 && millis() > 2000){
+      gameOver = true;
+      console.log("lose")
+      // if(ste > this.x && ste < this.x + 150 && ste > this.y && mste < this.y + 150){
+      //   gameOver = true;
+      //
+      // }
+    }
+  }
+}
+function Greenthing(){
+  this.position = createVector(random(width), random(height))
+  this.display = function(){
+    fill(0,225,0);
+    ellipse(this.position.x, this.position.y, 30)
+  }
+  this.checkforpoint = function(){
+    var a = (this.position.x - ste.x)*(this.position.x - ste.x);
+    var b = (this.position.y - ste.y)*(this.position.y - ste.y);
+    var c = sqrt(a+b)
+    if (c < 80){
+      point++;
+      console.log("1 point");
+      this.position = createVector(random(width), random(height))
+    }
+  }
+}
+function GameOverScreen(){
+  image(gameOverImg, 0, 0, windowWidth, windowHeight);
 }
